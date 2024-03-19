@@ -1,18 +1,24 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
+#include <pthread.h>
 #include <unistd.h>
 
-int g_val = 100;
+void *
+Routine(void *arg) {
+  const char *msg = (char *)arg;
+  while (1) {
+    printf("I am %s\n", msg);
+    sleep(1);
+  }
+  return NULL;
+}
 
 int
 main() {
-  pid_t id = vfork();
-  if (id == 0) {
-    g_val = 200;
-    exit(0);
+  pthread_t tid;
+  pthread_create(&tid, NULL, Routine, (void *)"thread 1");
+  while (1) {
+    printf("I am main thread!\n");
+    sleep(2);
   }
-  sleep(3);
-  printf("g_val: %d\n", g_val);
   return 0;
 }
