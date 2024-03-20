@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <sys/types.h>
 
 void *
 Routine(void *arg) {
@@ -14,8 +16,12 @@ Routine(void *arg) {
 
 int
 main() {
-  pthread_t tid;
-  pthread_create(&tid, NULL, Routine, (void *)"thread 1");
+  pthread_t tid[5];
+  for (int i = 0; i < 5; ++i) {
+    char *buffer = (char *)malloc(64);
+    sprintf(buffer, "thread %d", i);
+    pthread_create(&tid[i], NULL, Routine, buffer);
+  }
   while (1) {
     printf("I am main thread!\n");
     sleep(2);
